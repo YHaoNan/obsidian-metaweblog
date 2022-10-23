@@ -44,5 +44,9 @@ export function fetchRemoteContent(plugin:MyPlugin, editor: Editor, view: Markdo
                     }
 
                     new Notice('Done!');
-                })
+                }).catch(
+                    (err: any) => {
+                        new Notice(`Error: ${err}`);
+                    }
+                )
 }

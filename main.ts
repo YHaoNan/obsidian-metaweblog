@@ -12,8 +12,9 @@ export default class MyPlugin extends Plugin {
 	settings: MetaweblogSettings = DEFAULT_SETTINGS;
 	metaweblog: any = '';
 	async onload() {
-		// 这个命令拉取最多10000个博客，并创建文件和目录（目录即分类），但并不填充任何文件内容
+		await this.loadSettings();
 		this.createMetaweblog();
+		// 这个命令拉取最多10000个博客，并创建文件和目录（目录即分类），但并不填充任何文件内容
 		this.addCommand({
 			id: 'fetch-remote-blogs',
 			name: 'Fetch Remote Blogs',

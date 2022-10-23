@@ -35,8 +35,8 @@ export default class MetaweblogSettingTab extends PluginSettingTab {
 				.setPlaceholder('Enter your URL')
 				.setValue(this.plugin.settings.url)
 				.onChange(async (value) => {
-					this.plugin.createMetaweblog();
 					this.plugin.settings.url = value;
+					this.plugin.createMetaweblog();
 					await this.plugin.saveSettings();
 				}));
 

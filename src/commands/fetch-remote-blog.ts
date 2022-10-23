@@ -56,6 +56,8 @@ export function fetchRemoteBlog(plugin: MyPlugin) {
                                 }
                             }
                             new Notice('All done!')
+                        }).catch((err: any) => {
+                            new Notice(`Error: ${err}`);
                         })
                             
         
