@@ -12,8 +12,8 @@ export default class MyPlugin extends Plugin {
 	settings: MetaweblogSettings = DEFAULT_SETTINGS;
 	metaweblog: any = '';
 	async onload() {
-		this.fetchBlogId()
 		// 这个命令拉取最多10000个博客，并创建文件和目录（目录即分类），但并不填充任何文件内容
+		this.createMetaweblog();
 		this.addCommand({
 			id: 'fetch-remote-blogs',
 			name: 'Fetch Remote Blogs',
@@ -72,26 +72,26 @@ export default class MyPlugin extends Plugin {
 		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
 		this.addSettingTab(new MetaweblogSettingTab(this.app, this));
 	}
-	fetchBlogId() {
+	createMetaweblog() {
 		const MetaWeblog = require('metaweblog-api');
 		this.metaweblog = new MetaWeblog(this.settings.url);
-		this.metaweblog.getUsersBlogs(this.settings.appkey, this.settings.username, this.settings.password)
-			.then((blogInfo: any) => {
-				if(!blogInfo || blogInfo.length === 0) {
-					new Notice('No blog information...Plugin is not working');
-				} else {
-					let blogName = blogInfo[0].blogName;
-					let blogUrl = blogInfo[0].url;
-					this.settings.blogId = blogInfo[0].blogid;
-					if (blogInfo.length > 1) {
-						new Notice('There are multiple blog in your username. We will select the first');
-					}
-					new Notice(`ObsidianMetaweblog\n\nBlogId: ${this.blogId}\nBlogName: ${blogName}\nBlogURL: ${blogUrl}`);
-				}
-			}).catch((err: any) => {
-				new Notice('It seems your network can not connect to your blog service provider. You can only edit offline.');
-				new Notice(`${err}`);
-			})
+		// this.metaweblog.getUsersBlogs(this.settings.appkey, this.settings.username, this.settings.password)
+		// 	.then((blogInfo: any) => {
+		// 		if(!blogInfo || blogInfo.length === 0) {
+		// 			new Notice('No blog information...Plugin is not working');
+		// 		} else {
+		// 			let blogName = blogInfo[0].blogName;
+		// 			let blogUrl = blogInfo[0].url;
+		// 			this.settings.blogId = blogInfo[0].blogid;
+		// 			if (blogInfo.length > 1) {
+		// 				new Notice('There are multiple blog in your username. We will select the first');
+		// 			}
+		// 			new Notice(`ObsidianMetaweblog\n\nBlogId: ${this.settings.blogId}\nBlogName: ${blogName}\nBlogURL: ${blogUrl}`);
+		// 		}
+		// 	}).catch((err: any) => {
+		// 		new Notice('It seems your network can not connect to your blog service provider. You can only edit offline.');
+		// 		new Notice(`${err}`);
+		// 	})
 	}
 
 	onunload() {

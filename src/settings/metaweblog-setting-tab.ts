@@ -35,6 +35,7 @@ export default class MetaweblogSettingTab extends PluginSettingTab {
 				.setPlaceholder('Enter your URL')
 				.setValue(this.plugin.settings.url)
 				.onChange(async (value) => {
+					this.plugin.createMetaweblog();
 					this.plugin.settings.url = value;
 					await this.plugin.saveSettings();
 				}));
@@ -61,5 +62,25 @@ export default class MetaweblogSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
+		new Setting(containerEl)
+			.setName('Vault Absolute Path')
+			.setDesc('Your vault absolute path')
+			.addText(text => text
+				.setPlaceholder('Your vault absolute path')
+				.setValue(this.plugin.settings.vaultAbsolutePath)
+				.onChange(async (value) => {
+					this.plugin.settings.vaultAbsolutePath = value;
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('blogId')
+			.setDesc('blogId')
+			.addText(text => text
+				.setPlaceholder('blogId')
+				.setValue(this.plugin.settings.blogId)
+				.onChange(async (value) => {
+					this.plugin.settings.blogId = value;
+					await this.plugin.saveSettings();
+				}));
 	}
 }
