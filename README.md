@@ -1,73 +1,61 @@
-# Obsidian Sample Plugin
+# Obsidian Metaweblog
 
-This is a sample plugin for Obsidian (https://obsidian.md).
-
-This project uses Typescript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in Typescript Definition format, which contains TSDoc comments describing what it does.
-
-**Note:** The Obsidian API is still in early alpha and is subject to change at any time!
-
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Changes the default font color to red using `styles.css`.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
-
-## First time developing plugins?
-
-Quick starting guide for new plugin devs:
-
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
-
-## Releasing new releases
-
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
-
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
-
-## Adding your plugin to the community plugin list
-
-- Check https://github.com/obsidianmd/obsidian-releases/blob/master/plugin-review.md
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
-
-## How to use
-
-- Clone this repo.
-- `npm i` or `yarn` to install dependencies
-- `npm run dev` to start compilation in watch mode.
-
-## Manually installing the plugin
-
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
-
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint .\src\`
+将Obsidian与Metaweblog API整合工作。由于本人使用博客园，所以我只测试过博客园可以正常工作。
 
 
-## API Documentation
+# Quick Start
+## 1. 填写设置
+开启插件后，你可能看到一些异常信息，因为你还没有填写插件的设置项
 
-See https://github.com/obsidianmd/obsidian-api
+你需要告诉插件如下信息：
+1. `appkey`：metaweblog api的appkey，如果你使用博客园，该项留空即可
+2. `username`：你的用户名
+3. `password`：密码，如果你使用博客园，请到`设置->其他设置->Metaweblog访问令牌`创建token
+4. `url`：你的metaweblog访问地址
+5. `vaultAbsolutePath`：你仓库的绝对路径，没时间研究VaultAPI，所以直接用了fs和path，需要你自己告诉我仓库的绝对路径
+6. `blogId`：其实博客id可以自动获取，但由于存在一个用户有多个博客的情况，还是选择了手动输入。
+
+你可以向你的Metaweblog API提供者发一个请求获取你的blogid
+
+![](images/2022-10-23-10-33-21.png)
+
+第一个参数是appkey，我这里是博客园，不用填写，第二个是用户名，第三个是密码。下面的返回值里就有blogid。
+
+![](images/2022-10-23-10-33-58.png)
+
+## 拉取post
+第一次使用时，你的Vault应该是空的，你可以选择拉取所有post到本地（也可以不拉）。命令`Fetch Remote Blogs`可以将所有的远端博客拉取到本地（如果你的博文很多，这可能需要一段时间），并根据分类创建目录结构。
+
+![](images/2022-10-23-10-35-37.png)
+
+拉取后的效果
+
+![](images/2022-10-23-10-36-45.png)
+
+## 从远端更新和发布到远端
+
+打开单篇文章后，`Fetch Remote Content`从远端更新内容到本地，`Commit To Remote`将本地内容推送到远端（并发布）
+
+![](images/2022-10-23-10-37-35.png)
+
+## 创建新文章
+`New Post`命令可以创建新的文章
+
+![](images/2022-10-23-10-38-44.png)
+
+它，有点丑，不过你可以在这里填写你的文章标题和内容分类
+
+![](images/2022-10-23-10-39-18.png)
+
+点击最下面的创建即可，相应的文件会创建到Vault对应的文件夹下。
+
+## 博客园用户特别注意
+如果你希望你的Markdown在博客园网站中正常显示，而不是显示为纯文本，请将`[Markdown]`分类勾选上。
+
+# 文件命名规则
+Vault中的博客文件以`文章title-postid`格式命名，`postid`用于定位远端post，请勿擅自修改。
+
+![](images/2022-10-23-10-41-07.png)
+
+# 不同分类下的同一篇文章
+如果一篇文章在很多分类下，那么对应vault中，它也会在很多文件夹下。你更新其中一个文件夹下的文章，其它文件夹下的不会更新，如果需要保持同步，请手动使用`Fetch Remote Content`。
